@@ -11,3 +11,5 @@ dist
 .automaton/wallet.json
 .automaton/state.db
 
+package-lock.json
+.claude-flow/
