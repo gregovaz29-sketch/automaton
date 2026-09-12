@@ -36,6 +36,7 @@ import { prettySink } from "./observability/pretty-sink.js";
 import { bootstrapTopup } from "./conway/topup.js";
 import { randomUUID } from "crypto";
 import { keccak256, toHex } from "viem";
+import { createSafeLocalDemoReport } from "./demo/safe-local-demo.js";
 
 const logger = createLogger("main");
 const VERSION = "0.2.1";
@@ -56,6 +57,9 @@ Conway Automaton v${VERSION}
 Sovereign AI Agent Runtime
 
 Usage:
+  automaton --safe-demo [--task <texto>]
+                              Run a local preflight only. No wallet, network,
+                              credentials, commands, writes, payments, or agents.
   automaton --run          Start the automaton (first run triggers setup wizard)
   automaton --setup        Re-run the interactive setup wizard
   automaton --configure    Edit configuration (providers, model, treasury, general)
@@ -71,6 +75,13 @@ Environment:
   CONWAY_API_KEY           Conway API key (overrides config)
   OLLAMA_BASE_URL          Ollama base URL (overrides config, e.g. http://localhost:11434)
 `);
+    process.exit(0);
+  }
+
+  if (args.includes("--safe-demo")) {
+    if (args.includes("--run")) throw new Error("--safe-demo cannot be used with --run");
+    const taskIndex = args.indexOf("--task");
+    logger.info(JSON.stringify(createSafeLocalDemoReport(taskIndex >= 0 ? args[taskIndex + 1] : undefined), null, 2));
     process.exit(0);
   }
 
